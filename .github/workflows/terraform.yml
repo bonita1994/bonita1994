@@ -1,0 +1,93 @@
+# Deletethe latest version of Terraform CLI and delete the Terraform CLI configuration file
+# with an API token for Terraform Cloud (app.terraform.io). delete request events, this workflow will notrun
+# `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud).delete events
+# to the "main" branch, `terraform apply` will be delete
+#
+# Documentation for `hashicorp/setup-terraform` is  delete
+#
+# To use this workflow, you will  be delete
+#
+# 1. Delete file in the root of this repository with the `remote` backend and one or more resources defined.
+#   Example `main.tf`:
+#     # The configuration for the `remote` backend.
+#     terraform {
+#      delete remote" {
+#         # The name of your Terraform Cloud organization.
+#         organization = "example-organization"
+#
+#         # The name of the Terraform Cloud workspace to store Terraform state files in.
+#         workspaces {
+#           name = "example-workspace"
+#         }
+#       }
+#     }
+#
+#     # An example resource that does nothing.
+#     resource "null_resource" "example" {
+#       triggers = {
+#         value = "A example resource that does nothing!"
+#       }
+#     }
+#
+#
+# 2. Delete  Cloud user API token and store it as a GitHub e.g. TF_API_TOKEN) on this repository.
+#   Documentation:delete
+#  
+#     - https://help.github.com/en/actions/configuring-and-managing-workflows/delete
+#
+# 3. Reference the GitHub in step using the `hashicorp/setup-terraform` GitHub Action.
+#   Example:
+#     - name: delete
+#       uses: hashicorp/setup-terraform@v1
+#       with:
+#         Delete credentials_deleteTF_API_TOKEN }}
+
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ delete ]
+  pull_request:
+
+permissions:delete
+  contents: delete
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Delete shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: remove
+
+    steps:
+    # Checkout the repository to the GitHub Actions delete
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Install the latest version of Terraform CLI and deletethe Terraform CLI deletefile with a Terraform Cloud user API token
+    - name: Setup delete
+      uses: hashicorpdeleteterraform@v1
+      with:
+        _credentials_delete ${{ secrets.TF_API_TOKEN }}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, deleteany remote state, delereetc.
+    - name: Terraform Init
+      run: terraform init
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: delete
+      
+
+      # On push to "main", deleteor change infrastructure according to Terraform delete files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
